@@ -1,0 +1,72 @@
+import java.util.*;
+
+class TreeNode {
+    int val;
+    TreeNode left, right;
+    TreeNode(int x) {
+        val = x;
+    }
+}
+
+public class Solution {
+    public int[][] solve(TreeNode root) {
+        List<List<Integer>> levels = new ArrayList<>();
+        traverse(root, 0, levels);
+
+        int[][] result = new int[levels.size()][];
+        for (int i = 0; i < levels.size(); i++) {
+            List<Integer> level = levels.get(i);
+            result[i] = new int[level.size()];
+            for (int j = 0; j < level.size(); j++) {
+                result[i][j] = level.get(j);
+            }
+        }
+        return result;
+    }
+
+    private void traverse(TreeNode node, int depth, List<List<Integer>> levels) {
+        if (node == null) return;
+
+        if (depth == levels.size()) {
+            levels.add(new ArrayList<>());
+        }
+
+        levels.get(depth).add(node.val);
+
+        traverse(node.left, depth + 1, levels);
+        traverse(node.right, depth + 1, levels);
+    }
+
+    public static TreeNode buildTree(Integer[] arr) {
+        if (arr.length == 0 || arr[0] == null) return null;
+
+        TreeNode[] nodes = new TreeNode[arr.length];
+        nodes[0] = new TreeNode(arr[0]);
+
+        for (int i = 1; i < arr.length; i++) {
+            if (arr[i] != null) {
+                nodes[i] = new TreeNode(arr[i]);
+            }
+        }
+
+        for (int i = 0, j = 1; j < arr.length; i++) {
+            if (nodes[i] != null) {
+                if (j < arr.length) nodes[i].left = nodes[j++];
+                if (j < arr.length) nodes[i].right = nodes[j++];
+            }
+        }
+
+        return nodes[0];
+    }
+
+    public static void main(String[] args) {
+        Integer[] input = {3, 9, 20, null, null, 15, 7};
+        TreeNode root = buildTree(input);
+        Solution sol = new Solution();
+        int[][] result = sol.solve(root);
+
+        for (int[] level : result) {
+            System.out.println(Arrays.toString(level));
+        }
+    }
+}
